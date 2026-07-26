@@ -1,6 +1,7 @@
 """MCP server exposing LabOS operational capabilities."""
 
 from __future__ import annotations
+
 import os
 import sys
 from datetime import datetime
@@ -16,7 +17,7 @@ from labos_copilot.mcp.tools import (
     utc_now,
 )
 from labos_copilot.sdk import LabOSClient
-
+from labos_copilot.mcp.server import create_mcp_server
 
 def serialize_model(model: BaseModel) -> dict[str, Any]:
     """Convert a Pydantic model into a JSON-compatible dictionary."""
@@ -125,7 +126,27 @@ def default_fixture_directory() -> Path:
     return Path(__file__).resolve().parents[3] / "fixtures"
 
 
-mcp = create_mcp_server(default_fixture_directory())
+def configured_now_provider() -> NowProvider:
+    """Resolve a fixed analysis time when supplied by the parent process."""
+
+    configured_time = os.getenv("LABOS_ANALYSIS_TIME")
+
+    if configured_time is None:
+        return utc_now
+
+    analysis_time = datetime.fromisoformat(configured_time.replace("Z", "+00:00"))
+
+    if analysis_time.tzinfo is None or analysis_time.utcoffset() is None:
+        raise ValueError("LABOS_ANALYSIS_TIME must be timezone-aware.")
+
+    return lambda: analysis_time
+
+
+mcp = create_mcp_server(
+    default_fixture_directory(),
+    now_provider=configured_now_provider(),
+)
+
 
 def main() -> None:
     """Run the MCP server over standard input and output."""
