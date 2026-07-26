@@ -17,7 +17,7 @@ from labos_copilot.mcp.tools import (
     utc_now,
 )
 from labos_copilot.sdk import LabOSClient
-from labos_copilot.mcp.server import create_mcp_server
+
 
 def serialize_model(model: BaseModel) -> dict[str, Any]:
     """Convert a Pydantic model into a JSON-compatible dictionary."""

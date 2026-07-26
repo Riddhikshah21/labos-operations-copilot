@@ -126,7 +126,7 @@ def build_operations_brief(
     return OperationsBrief(
         generated_at=analysis_time,
         experiments_reviewed=len(analyses),
-        executive_summary=narrative.executive_summary,
+        executive_summary=build_executive_summary(analyses),
         critical_items=critical_items,
         warning_items=warning_items,
         healthy_experiment_ids=healthy_experiment_ids,
@@ -233,4 +233,28 @@ async def run_daily_operations_agent(
         model_name=settings.openai_model,
         brief=brief,
         tools_used=tools_used,
+    )
+
+
+def build_executive_summary(
+    analyses: list[ExperimentBlockerAnalysis],
+) -> str:
+    """Create a factual summary from deterministic findings."""
+
+    findings = [finding for analysis in analyses for finding in analysis.findings]
+
+    affected_ids = {finding.experiment_id for finding in findings}
+
+    critical_count = sum(finding.severity is Severity.CRITICAL for finding in findings)
+
+    warning_count = sum(finding.severity is Severity.WARNING for finding in findings)
+
+    healthy_count = sum(analysis.is_healthy for analysis in analyses)
+
+    return (
+        f"Reviewed {len(analyses)} active experiments. "
+        f"{len(affected_ids)} require attention, with "
+        f"{critical_count} critical findings and "
+        f"{warning_count} warnings. "
+        f"{healthy_count} have no detected blockers."
     )
