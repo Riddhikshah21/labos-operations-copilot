@@ -38,9 +38,7 @@ def evaluate_instrument(
                     f"Required instrument ID: {instrument_id}.",
                     "No matching instrument record was found.",
                 ),
-                recommended_action=(
-                    "Verify the instrument identifier and contact lab operations."
-                ),
+                recommended_action=("Verify the instrument identifier and contact lab operations."),
             )
         ]
 
@@ -66,9 +64,7 @@ def evaluate_instrument(
                     f"Instrument status: {instrument.status.value}.",
                     f"Expected availability: {availability}.",
                 ),
-                recommended_action=(
-                    "Review the instrument schedule or assign another instrument."
-                ),
+                recommended_action=("Review the instrument schedule or assign another instrument."),
             )
         ]
 

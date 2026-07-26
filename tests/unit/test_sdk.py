@@ -30,9 +30,7 @@ def test_client_lists_active_experiments(
     experiments = labos_client.experiments.list_active()
 
     assert len(experiments) == 5
-    assert all(
-        experiment.status is ExperimentStatus.ACTIVE for experiment in experiments
-    )
+    assert all(experiment.status is ExperimentStatus.ACTIVE for experiment in experiments)
 
 
 def test_client_gets_experiment_by_id(

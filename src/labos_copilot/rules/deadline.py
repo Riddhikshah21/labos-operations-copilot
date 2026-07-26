@@ -37,9 +37,7 @@ def evaluate_deadline(
                     f"Expected deadline ID: {deadline_id}.",
                     "No matching deadline record was found.",
                 ),
-                recommended_action=(
-                    "Verify the customer deadline with the commercial team."
-                ),
+                recommended_action=("Verify the customer deadline with the commercial team."),
             )
         ]
 
@@ -89,8 +87,6 @@ def evaluate_deadline(
                 f"Remaining time: {remaining_hours:.1f} hours.",
                 f"Priority: {deadline.priority.value}.",
             ),
-            recommended_action=(
-                "Review delivery risk and notify the experiment owner."
-            ),
+            recommended_action=("Review delivery risk and notify the experiment owner."),
         )
     ]

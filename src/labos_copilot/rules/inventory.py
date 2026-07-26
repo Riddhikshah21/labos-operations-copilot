@@ -63,10 +63,7 @@ def evaluate_inventory(
             )
             continue
 
-        if (
-            item.status is InventoryStatus.LOW_STOCK
-            or item.quantity < item.minimum_required
-        ):
+        if item.status is InventoryStatus.LOW_STOCK or item.quantity < item.minimum_required:
             findings.append(
                 BlockerFinding(
                     rule_id="inventory-below-minimum",
@@ -77,10 +74,7 @@ def evaluate_inventory(
                     evidence=(
                         f"Material: {item.id} — {item.name}.",
                         f"Available quantity: {item.quantity:g} {item.unit}.",
-                        (
-                            "Minimum required quantity: "
-                            f"{item.minimum_required:g} {item.unit}."
-                        ),
+                        (f"Minimum required quantity: {item.minimum_required:g} {item.unit}."),
                     ),
                     recommended_action=(
                         "Confirm sufficient material is reserved before proceeding."

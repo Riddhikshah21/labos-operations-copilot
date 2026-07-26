@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
@@ -12,8 +12,6 @@ from labos_copilot.domain import (
     Instrument,
     InventoryItem,
 )
-
-ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
 class FixtureFormatError(ValueError):
@@ -29,7 +27,10 @@ class LabOSFixtures(BaseModel):
     deadlines: list[CustomerDeadline]
 
 
-def load_fixture_list(path: Path, model_type: type[ModelT]) -> list[ModelT]:
+def load_fixture_list[ModelT: BaseModel](
+    path: Path,
+    model_type: type[ModelT],
+) -> list[ModelT]:
     """Load a JSON array and validate each item against a Pydantic model."""
 
     try:
@@ -46,9 +47,7 @@ def load_fixture_list(path: Path, model_type: type[ModelT]) -> list[ModelT]:
 
     for index, item in enumerate(payload):
         if not isinstance(item, dict):
-            raise FixtureFormatError(
-                f"Fixture item {index} in {path} must be a JSON object."
-            )
+            raise FixtureFormatError(f"Fixture item {index} in {path} must be a JSON object.")
 
         try:
             validated_items.append(model_type.model_validate(item))

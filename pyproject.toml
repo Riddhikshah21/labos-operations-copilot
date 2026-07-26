@@ -1,0 +1,78 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "labos-operations-copilot"
+version = "0.1.0"
+description = "AI-assisted laboratory operations copilot using typed tools and deterministic analysis."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "Your Name" }
+]
+dependencies = [
+    "mcp[cli]>=1,<2",
+    "pydantic>=2.8,<3",
+    "pydantic-settings>=2.4,<3",
+    "python-dotenv>=1,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.11,<2",
+    "pytest>=8.3,<9",
+    "pytest-cov>=5,<7",
+    "ruff>=0.6,<1",
+]
+
+[project.scripts]
+labos-mcp = "labos_copilot.mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/labos_copilot"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = [
+    "--strict-config",
+    "--strict-markers",
+    "-ra",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "SIM",
+    "RUF",
+    "DTZ",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["mcp", "mcp.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
