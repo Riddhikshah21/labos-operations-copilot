@@ -1,0 +1,116 @@
+{
+  "analysis_cases": [
+    {
+      "id": "healthy-experiment",
+      "description": "Healthy active experiment has no blockers.",
+      "experiment_id": "EXP-101",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_healthy": true,
+      "expected_findings": []
+    },
+    {
+      "id": "delayed-experiment",
+      "description": "Long-running stage produces a critical delay.",
+      "experiment_id": "EXP-102",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_healthy": false,
+      "expected_findings": [
+        {
+          "rule_id": "stage-delay",
+          "category": "delay",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "missing-material",
+      "description": "Out-of-stock material blocks an experiment.",
+      "experiment_id": "EXP-103",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_healthy": false,
+      "expected_findings": [
+        {
+          "rule_id": "inventory-out-of-stock",
+          "category": "inventory",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "instrument-maintenance",
+      "description": "Maintenance makes the required instrument unavailable.",
+      "experiment_id": "EXP-104",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_healthy": false,
+      "expected_findings": [
+        {
+          "rule_id": "instrument-maintenance",
+          "category": "instrument",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "multiple-blockers",
+      "description": "One experiment has delay, inventory, instrument, and deadline blockers.",
+      "experiment_id": "EXP-105",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_healthy": false,
+      "expected_findings": [
+        {
+          "rule_id": "stage-delay",
+          "category": "delay",
+          "severity": "critical"
+        },
+        {
+          "rule_id": "inventory-below-minimum",
+          "category": "inventory",
+          "severity": "warning"
+        },
+        {
+          "rule_id": "instrument-offline",
+          "category": "instrument",
+          "severity": "critical"
+        },
+        {
+          "rule_id": "deadline-risk",
+          "category": "deadline",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "id": "unknown-experiment",
+      "description": "Unknown identifiers return a typed error.",
+      "experiment_id": "EXP-999",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_error_type": "ResourceNotFoundError"
+    }
+  ],
+  "action_cases": [
+    {
+      "id": "inventory-action",
+      "description": "Inventory blocker maps to procurement escalation.",
+      "experiment_id": "EXP-103",
+      "rule_id": "inventory-out-of-stock",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_action_type": "escalate_material_procurement"
+    },
+    {
+      "id": "deadline-action",
+      "description": "Deadline blocker maps to delivery-risk escalation.",
+      "experiment_id": "EXP-105",
+      "rule_id": "deadline-risk",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_action_type": "escalate_delivery_risk"
+    },
+    {
+      "id": "invalid-action",
+      "description": "Unknown findings cannot produce actions.",
+      "experiment_id": "EXP-105",
+      "rule_id": "unknown-rule",
+      "as_of": "2026-07-26T00:00:00Z",
+      "expected_error_type": "ActionPreparationError"
+    }
+  ]
+}
