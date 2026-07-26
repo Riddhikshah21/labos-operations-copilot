@@ -2,8 +2,10 @@
 
 import os
 import sys
+from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
 from typing import Literal
+
 from agents import (
     Agent,
     ModelSettings,
@@ -13,9 +15,7 @@ from agents import (
 )
 from agents.items import ToolCallItem
 from agents.mcp import MCPServerStdio
-from collections.abc import Awaitable, Callable
 
-from labos_copilot.agent.schemas import ApprovalDecision
 from labos_copilot.agent.errors import (
     AgentGroundingError,
     AgentProtocolError,
@@ -24,6 +24,7 @@ from labos_copilot.agent.grounding import validate_daily_brief
 from labos_copilot.agent.prompts import OPERATIONS_AGENT_INSTRUCTIONS
 from labos_copilot.agent.schemas import (
     AgentRunResult,
+    ApprovalDecision,
     BriefItem,
     OperationsBrief,
     OperationsNarrative,
