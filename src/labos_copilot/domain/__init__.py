@@ -6,17 +6,27 @@ from labos_copilot.domain.experiments import (
     ExperimentStage,
     ExperimentStatus,
 )
+from labos_copilot.domain.findings import (
+    BlockerCategory,
+    BlockerFinding,
+    ExperimentBlockerAnalysis,
+    Severity,
+)
 from labos_copilot.domain.instruments import Instrument, InstrumentStatus
 from labos_copilot.domain.inventory import InventoryItem, InventoryStatus
 
 __all__ = [
+    "BlockerCategory",
+    "BlockerFinding",
     "CustomerDeadline",
     "DeadlinePriority",
     "Experiment",
+    "ExperimentBlockerAnalysis",
     "ExperimentStage",
     "ExperimentStatus",
     "Instrument",
     "InstrumentStatus",
     "InventoryItem",
     "InventoryStatus",
+    "Severity",
 ]
