@@ -310,13 +310,20 @@ def write_markdown_report(
         "|---|---|---|---|",
     ]
 
-    for result in summary.results:
-        status = "PASS" if result.passed else "FAIL"
+    for case_result in summary.results:
+        status = "PASS" if case_result.passed else "FAIL"
 
-        details = "; ".join(result.errors) if result.errors else "; ".join(result.observations)
+        details = (
+            "; ".join(case_result.errors)
+            if case_result.errors
+            else "; ".join(case_result.observations)
+        )
 
         lines.append(
-            f"| `{result.case_id}` | {result.kind} | **{status}** | {_escape_table_text(details)} |"
+            f"| `{case_result.case_id}` | "
+            f"{case_result.kind} | "
+            f"**{status}** | "
+            f"{_escape_table_text(details)} |"
         )
 
     if live_results:
@@ -330,18 +337,19 @@ def write_markdown_report(
             ]
         )
 
-        for result in live_results:
-            status = "PASS" if result.passed else "FAIL"
-            tools = ", ".join(result.tools_used)
+        for live_result in live_results:
+            status = "PASS" if live_result.passed else "FAIL"
+            tools = ", ".join(live_result.tools_used)
+
             details = "; ".join(
                 (
-                    *result.errors,
-                    *result.approval_decisions,
+                    *live_result.errors,
+                    *live_result.approval_decisions,
                 )
             )
 
             lines.append(
-                f"| `{result.case_id}` | "
+                f"| `{live_result.case_id}` | "
                 f"**{status}** | "
                 f"{_escape_table_text(tools)} | "
                 f"{_escape_table_text(details)} |"
