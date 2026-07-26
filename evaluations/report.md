@@ -1,6 +1,6 @@
 # Evaluation Report
 
-Generated: `2026-07-26T22:00:37.428249+00:00`
+Generated: `2026-07-26T22:46:56.073319+00:00`
 
 ## Offline Metrics
 
@@ -25,6 +25,13 @@ Generated: `2026-07-26T22:00:37.428249+00:00`
 | `inventory-action` | action | **PASS** | action_type=escalate_material_procurement; status=mock_completed |
 | `deadline-action` | action | **PASS** | action_type=escalate_delivery_risk; status=mock_completed |
 | `invalid-action` | action | **PASS** | Observed expected error: ActionPreparationError |
+
+## Live Agent Cases
+
+| Case | Result | Tools | Details |
+|---|---|---|---|
+| `live-daily-review` | **PASS** | analyze_active_experiments |  |
+| `live-action-rejection` | **PASS** | analyze_active_experiments, prepare_operations_action, analyze_active_experiments, prepare_operations_action | prepare_operations_action=rejected |
 
 ## Interpretation
 

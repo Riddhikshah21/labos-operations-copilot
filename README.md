@@ -16,11 +16,7 @@ Uses simulated data only. No real laboratory systems or actions are connected.
 
 ## Architecture
 
-Streamlit UI → Application Service → LLM Agent → MCP Tools
-     → Typed LabOS SDK → Experiments / Inventory / Instruments / Deadlines
-     → Deterministic Blocker Engine → Findings / Approval / Mock Actions
-
-The LLM handles intent, tool selection, and summarization. Python rules handle blocker detection, severity, validation, and policy.
+![Alt text](assets/labos-architecture.png)
 
 ### Blocker Rules
 
