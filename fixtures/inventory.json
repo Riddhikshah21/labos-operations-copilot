@@ -1,0 +1,29 @@
+[
+  {
+    "id": "MAT-001",
+    "name": "Standard assay buffer",
+    "status": "available",
+    "quantity": 100,
+    "minimum_required": 10,
+    "unit": "mL",
+    "expected_restock_at": null
+  },
+  {
+    "id": "MAT-002",
+    "name": "Expression reagent kit",
+    "status": "out_of_stock",
+    "quantity": 0,
+    "minimum_required": 1,
+    "unit": "kit",
+    "expected_restock_at": "2026-07-29T09:00:00Z"
+  },
+  {
+    "id": "MAT-003",
+    "name": "Specialized binding reagent",
+    "status": "low_stock",
+    "quantity": 2,
+    "minimum_required": 5,
+    "unit": "mL",
+    "expected_restock_at": "2026-07-28T14:00:00Z"
+  }
+]

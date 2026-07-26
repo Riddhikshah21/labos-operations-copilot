@@ -1,0 +1,37 @@
+[
+  {
+    "id": "DL-101",
+    "experiment_id": "EXP-101",
+    "customer_name": "Helix Therapeutics",
+    "due_at": "2026-08-10T17:00:00Z",
+    "priority": "normal"
+  },
+  {
+    "id": "DL-102",
+    "experiment_id": "EXP-102",
+    "customer_name": "Northstar Bio",
+    "due_at": "2026-08-01T17:00:00Z",
+    "priority": "high"
+  },
+  {
+    "id": "DL-103",
+    "experiment_id": "EXP-103",
+    "customer_name": "Axiom Biologics",
+    "due_at": "2026-07-30T17:00:00Z",
+    "priority": "normal"
+  },
+  {
+    "id": "DL-104",
+    "experiment_id": "EXP-104",
+    "customer_name": "Nova Protein Labs",
+    "due_at": "2026-07-29T17:00:00Z",
+    "priority": "high"
+  },
+  {
+    "id": "DL-105",
+    "experiment_id": "EXP-105",
+    "customer_name": "Arcadia Pharma",
+    "due_at": "2026-07-26T17:00:00Z",
+    "priority": "critical"
+  }
+]

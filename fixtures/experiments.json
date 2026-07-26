@@ -1,0 +1,57 @@
+[
+  {
+    "id": "EXP-101",
+    "name": "EGFR screening batch A",
+    "status": "active",
+    "current_stage": "running",
+    "stage_started_at": "2026-07-25T16:00:00Z",
+    "expected_stage_duration_hours": 12,
+    "required_material_ids": ["MAT-001"],
+    "required_instrument_id": "INS-001",
+    "deadline_id": "DL-101"
+  },
+  {
+    "id": "EXP-102",
+    "name": "Affinity characterization batch B",
+    "status": "active",
+    "current_stage": "data_processing",
+    "stage_started_at": "2026-07-22T08:00:00Z",
+    "expected_stage_duration_hours": 24,
+    "required_material_ids": ["MAT-001"],
+    "required_instrument_id": "INS-001",
+    "deadline_id": "DL-102"
+  },
+  {
+    "id": "EXP-103",
+    "name": "Expression validation batch C",
+    "status": "active",
+    "current_stage": "waiting_for_materials",
+    "stage_started_at": "2026-07-25T09:00:00Z",
+    "expected_stage_duration_hours": 24,
+    "required_material_ids": ["MAT-002"],
+    "required_instrument_id": null,
+    "deadline_id": "DL-103"
+  },
+  {
+    "id": "EXP-104",
+    "name": "Thermostability panel D",
+    "status": "active",
+    "current_stage": "queued",
+    "stage_started_at": "2026-07-25T12:00:00Z",
+    "expected_stage_duration_hours": 12,
+    "required_material_ids": ["MAT-001"],
+    "required_instrument_id": "INS-002",
+    "deadline_id": "DL-104"
+  },
+  {
+    "id": "EXP-105",
+    "name": "Priority customer screening batch E",
+    "status": "active",
+    "current_stage": "waiting_for_materials",
+    "stage_started_at": "2026-07-23T06:00:00Z",
+    "expected_stage_duration_hours": 12,
+    "required_material_ids": ["MAT-003"],
+    "required_instrument_id": "INS-003",
+    "deadline_id": "DL-105"
+  }
+]

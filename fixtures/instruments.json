@@ -1,0 +1,23 @@
+[
+  {
+    "id": "INS-001",
+    "name": "BLI instrument 01",
+    "status": "available",
+    "current_experiment_id": null,
+    "available_at": null
+  },
+  {
+    "id": "INS-002",
+    "name": "Thermostability instrument 01",
+    "status": "maintenance",
+    "current_experiment_id": null,
+    "available_at": "2026-07-27T08:00:00Z"
+  },
+  {
+    "id": "INS-003",
+    "name": "BLI instrument 02",
+    "status": "offline",
+    "current_experiment_id": null,
+    "available_at": null
+  }
+]
