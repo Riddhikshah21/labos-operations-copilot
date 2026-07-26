@@ -3,7 +3,7 @@
 import os
 import sys
 from datetime import UTC, datetime
-
+from typing import Literal
 from agents import (
     Agent,
     ModelSettings,
@@ -13,7 +13,9 @@ from agents import (
 )
 from agents.items import ToolCallItem
 from agents.mcp import MCPServerStdio
+from collections.abc import Awaitable, Callable
 
+from labos_copilot.agent.schemas import ApprovalDecision
 from labos_copilot.agent.errors import (
     AgentGroundingError,
     AgentProtocolError,
@@ -33,6 +35,41 @@ from labos_copilot.domain import (
 )
 from labos_copilot.rules import BlockerEngine
 from labos_copilot.sdk import LabOSClient
+
+ApprovalCallback = Callable[
+    [str, str | None],
+    Awaitable[bool],
+]
+
+type MCPApprovalPolicy = dict[
+    str,
+    Literal["always", "never"],
+]
+
+_READ_ONLY_MCP_TOOLS = [
+    "list_active_experiments",
+    "get_experiment_details",
+    "get_inventory_status",
+    "get_instrument_status",
+    "get_customer_deadline",
+    "analyze_experiment_blockers",
+    "analyze_active_experiments",
+]
+
+
+def mcp_approval_policy() -> MCPApprovalPolicy:
+    """Require approval only for the mock action tool."""
+
+    return {
+        "list_active_experiments": "never",
+        "get_experiment_details": "never",
+        "get_inventory_status": "never",
+        "get_instrument_status": "never",
+        "get_customer_deadline": "never",
+        "analyze_experiment_blockers": "never",
+        "analyze_active_experiments": "never",
+        "prepare_operations_action": "always",
+    }
 
 
 def create_operations_agent(
@@ -138,6 +175,7 @@ async def run_daily_operations_agent(
     question: str,
     settings: Settings,
     as_of: datetime | None = None,
+    approval_callback: ApprovalCallback | None = None,
 ) -> AgentRunResult:
     """Run the MCP-backed agent and validate its output."""
 
@@ -174,7 +212,7 @@ async def run_daily_operations_agent(
         },
         cache_tools_list=True,
         client_session_timeout_seconds=30,
-        require_approval="never",
+        require_approval=mcp_approval_policy(),
         failure_error_function=None,
     ) as server:
         agent = create_operations_agent(
@@ -185,25 +223,74 @@ async def run_daily_operations_agent(
         agent_input = (
             f"{normalized_question}\n\n"
             f"Analysis timestamp: {analysis_time.isoformat()}\n"
-            "Call analyze_active_experiments using this "
-            "exact timestamp."
+            "Call analyze_active_experiments using this exact timestamp."
+        )
+
+        run_config = RunConfig(
+            tracing_disabled=True,
+            trace_include_sensitive_data=False,
         )
 
         result = await Runner.run(
             agent,
             agent_input,
             max_turns=settings.agent_max_turns,
-            run_config=RunConfig(
-                trace_include_sensitive_data=False,
-            ),
+            run_config=run_config,
         )
 
-    # The LLM produces only narrative and priority selection.
-    narrative = OperationsNarrative.model_validate(result.final_output)
+        all_run_items = list(result.new_items)
+        approval_decisions: list[ApprovalDecision] = []
 
+        while result.interruptions:
+            if approval_callback is None:
+                raise AgentProtocolError(
+                    "The agent requested an approval-gated tool, "
+                    "but no approval callback was configured."
+                )
+
+            state = result.to_state()
+
+            for interruption in result.interruptions:
+                tool_name = interruption.name or "unknown_tool"
+
+                approved = await approval_callback(
+                    tool_name,
+                    interruption.arguments,
+                )
+
+                approval_decisions.append(
+                    ApprovalDecision(
+                        tool_name=tool_name,
+                        approved=approved,
+                    )
+                )
+
+                if approved:
+                    state.approve(
+                        interruption,
+                        always_approve=False,
+                    )
+                else:
+                    state.reject(
+                        interruption,
+                        rejection_message=("The reviewer rejected this mock operations action."),
+                    )
+
+            # This must remain inside the MCP context.
+            result = await Runner.run(
+                agent,
+                state,
+                max_turns=settings.agent_max_turns,
+                run_config=run_config,
+            )
+
+            all_run_items.extend(result.new_items)
+
+    # The MCP server is closed below this line.
+    narrative = OperationsNarrative.model_validate(result.final_output)
     tools_used = tuple(
         item.tool_name
-        for item in result.new_items
+        for item in all_run_items
         if isinstance(item, ToolCallItem) and item.tool_name is not None
     )
 
@@ -233,6 +320,7 @@ async def run_daily_operations_agent(
         model_name=settings.openai_model,
         brief=brief,
         tools_used=tools_used,
+        approval_decisions=tuple(approval_decisions),
     )
 
 

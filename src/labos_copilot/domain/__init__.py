@@ -1,5 +1,10 @@
 """Public domain-model exports."""
 
+from labos_copilot.domain.actions import (
+    ActionStatus,
+    ActionType,
+    OperationsAction,
+)
 from labos_copilot.domain.deadlines import CustomerDeadline, DeadlinePriority
 from labos_copilot.domain.experiments import (
     Experiment,
@@ -16,6 +21,8 @@ from labos_copilot.domain.instruments import Instrument, InstrumentStatus
 from labos_copilot.domain.inventory import InventoryItem, InventoryStatus
 
 __all__ = [
+    "ActionStatus",
+    "ActionType",
     "BlockerCategory",
     "BlockerFinding",
     "CustomerDeadline",
@@ -28,5 +35,6 @@ __all__ = [
     "InstrumentStatus",
     "InventoryItem",
     "InventoryStatus",
+    "OperationsAction",
     "Severity",
 ]

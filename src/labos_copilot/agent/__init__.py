@@ -7,6 +7,7 @@ from labos_copilot.agent.errors import (
 )
 from labos_copilot.agent.schemas import (
     AgentRunResult,
+    ApprovalDecision,
     BriefItem,
     OperationsBrief,
 )
@@ -19,6 +20,7 @@ __all__ = [
     "AgentGroundingError",
     "AgentProtocolError",
     "AgentRunResult",
+    "ApprovalDecision",
     "BriefItem",
     "OperationsAgentError",
     "OperationsBrief",

@@ -5,11 +5,13 @@ from __future__ import annotations
 from collections.abc import Callable
 from datetime import UTC, datetime
 
+from labos_copilot.actions import ActionService
 from labos_copilot.domain import (
     CustomerDeadline,
     ExperimentBlockerAnalysis,
     Instrument,
     InventoryItem,
+    OperationsAction,
 )
 from labos_copilot.mcp.schemas import (
     ActiveAnalysisResponse,
@@ -37,12 +39,19 @@ class LabOSToolService:
         client: LabOSClient,
         engine: BlockerEngine | None = None,
         now_provider: NowProvider = utc_now,
+        action_service: ActionService | None = None,
     ) -> None:
         self._client = client
         self._engine = engine or BlockerEngine(client)
         self._now_provider = now_provider
+        self._actions = action_service or ActionService(
+            engine=self._engine,
+            now_provider=now_provider,
+        )
 
-    def list_active_experiments(self) -> ActiveExperimentsResponse:
+    def list_active_experiments(
+        self,
+    ) -> ActiveExperimentsResponse:
         """List active experiments using compact summaries."""
 
         experiments = tuple(
@@ -111,7 +120,9 @@ class LabOSToolService:
     ) -> CustomerDeadline:
         """Retrieve the deadline associated with an experiment."""
 
-        return self._client.deadlines.get_for_experiment(experiment_id)
+        return self._client.deadlines.get_for_experiment(
+            experiment_id,
+        )
 
     def analyze_experiment_blockers(
         self,
@@ -131,13 +142,31 @@ class LabOSToolService:
         self,
         as_of: datetime | None = None,
     ) -> ActiveAnalysisResponse:
-        """Run deterministic blocker analysis for all active experiments."""
+        """Run blocker analysis for all active experiments."""
 
         analysis_time = as_of or self._now_provider()
 
-        analyses = self._engine.analyze_active(analysis_time)
+        analyses = self._engine.analyze_active(
+            analysis_time,
+        )
 
         return ActiveAnalysisResponse(
             as_of=analysis_time,
             analyses=tuple(analyses),
+        )
+
+    def prepare_operations_action(
+        self,
+        experiment_id: str,
+        rule_id: str,
+        as_of: datetime | None = None,
+    ) -> OperationsAction:
+        """Prepare a simulated action for a validated blocker."""
+
+        analysis_time = as_of or self._now_provider()
+
+        return self._actions.prepare(
+            experiment_id=experiment_id,
+            rule_id=rule_id,
+            as_of=analysis_time,
         )

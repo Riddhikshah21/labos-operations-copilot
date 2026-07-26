@@ -42,6 +42,13 @@ class OperationsNarrative(DomainModel):
     priority_rule_id: str | None = None
 
 
+class ApprovalDecision(DomainModel):
+    """Human decision for an approval-gated tool call."""
+
+    tool_name: str = Field(min_length=1)
+    approved: bool
+
+
 class AgentRunResult(DomainModel):
     """Validated result of one complete agent run."""
 
@@ -49,3 +56,4 @@ class AgentRunResult(DomainModel):
     model_name: str
     brief: OperationsBrief
     tools_used: tuple[str, ...]
+    approval_decisions: tuple[ApprovalDecision, ...] = ()

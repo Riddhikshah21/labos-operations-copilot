@@ -92,3 +92,16 @@ def test_mcp_server_can_be_created() -> None:
     server = create_mcp_server(FIXTURES_DIRECTORY)
 
     assert isinstance(server, FastMCP)
+
+
+def test_prepares_mock_operations_action(
+    tool_service: LabOSToolService,
+) -> None:
+    action = tool_service.prepare_operations_action(
+        experiment_id="EXP-105",
+        rule_id="deadline-risk",
+    )
+
+    assert action.experiment_id == "EXP-105"
+    assert action.source_rule_id == "deadline-risk"
+    assert action.status.value == "mock_completed"

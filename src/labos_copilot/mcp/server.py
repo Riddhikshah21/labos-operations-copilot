@@ -103,6 +103,22 @@ def create_mcp_server(
         )
 
     @server.tool()
+    def prepare_operations_action(
+        experiment_id: str,
+        rule_id: str,
+        as_of: datetime | None = None,
+    ) -> dict[str, Any]:
+        """Prepare a simulated operational action for a validated blocker."""
+
+        return serialize_model(
+            tools.prepare_operations_action(
+                experiment_id=experiment_id,
+                rule_id=rule_id,
+                as_of=as_of,
+            )
+        )
+
+    @server.tool()
     def analyze_active_experiments(
         as_of: datetime | None = None,
     ) -> dict[str, Any]:
