@@ -17,6 +17,9 @@ class ActionType(StrEnum):
     REQUEST_INSTRUMENT_RESCHEDULE = "request_instrument_reschedule"
     ESCALATE_DELIVERY_RISK = "escalate_delivery_risk"
 
+    PAUSE_EXPERIMENT = "pause_experiment"
+    WAIT_FOR_RESOURCE = "wait_for_resource"
+
 
 class ActionStatus(StrEnum):
     """Execution status for a mock action."""

@@ -34,6 +34,7 @@ dev = [
 [project.scripts]
 labos-mcp = "labos_copilot.mcp.server:main"
 labos-agent = "labos_copilot.agent.cli:main"
+labos-plan = "labos_copilot.agent.planning_cli:main"
 labos-evaluate = "labos_copilot.evaluation.cli:main"
 
 [tool.hatch.build.targets.wheel]
