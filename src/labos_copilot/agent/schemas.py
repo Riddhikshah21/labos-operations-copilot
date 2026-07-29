@@ -1,10 +1,16 @@
 """Structured inputs and outputs for the operations agent."""
 
 from datetime import datetime
+from enum import StrEnum
+from typing import Self
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
-from labos_copilot.domain import BlockerCategory, Severity
+from labos_copilot.domain import (
+    ActionType,
+    BlockerCategory,
+    Severity,
+)
 from labos_copilot.domain.base import DomainModel
 
 
@@ -57,3 +63,84 @@ class AgentRunResult(DomainModel):
     brief: OperationsBrief
     tools_used: tuple[str, ...]
     approval_decisions: tuple[ApprovalDecision, ...] = ()
+
+
+class ActionUrgency(StrEnum):
+    """Time horizon for an AI-generated action plan."""
+
+    IMMEDIATE = "immediate"
+    TODAY = "today"
+    THIS_WEEK = "this_week"
+
+
+class ActionPlanCandidate(DomainModel):
+    """One AI-generated remediation candidate."""
+
+    plan_id: str = Field(min_length=1)
+    action_type: ActionType
+
+    title: str = Field(min_length=1)
+    rationale: str = Field(min_length=1)
+
+    operational_steps: tuple[str, ...] = Field(min_length=1)
+    expected_impact: str = Field(min_length=1)
+    tradeoffs: tuple[str, ...] = Field(min_length=1)
+
+    urgency: ActionUrgency
+    confidence: float = Field(ge=0, le=1)
+
+    evidence_ids: tuple[str, ...] = Field(min_length=2)
+
+
+class ActionPlanSet(DomainModel):
+    """Two ranked AI-generated action alternatives."""
+
+    experiment_id: str = Field(min_length=1)
+    source_rule_id: str = Field(min_length=1)
+    category: BlockerCategory
+
+    candidates: tuple[ActionPlanCandidate, ...] = Field(
+        min_length=2,
+        max_length=2,
+    )
+
+    recommended_plan_id: str = Field(min_length=1)
+    selection_rationale: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_candidates(self) -> Self:
+        """Validate candidate identity and recommendation consistency."""
+
+        plan_ids = tuple(candidate.plan_id for candidate in self.candidates)
+
+        if len(plan_ids) != len(set(plan_ids)):
+            raise ValueError("Candidate plan IDs must be unique.")
+
+        action_types = tuple(candidate.action_type for candidate in self.candidates)
+
+        if len(action_types) != len(set(action_types)):
+            raise ValueError("Candidate plans must use distinct action types.")
+
+        if self.recommended_plan_id not in plan_ids:
+            raise ValueError("recommended_plan_id must reference a candidate plan.")
+
+        return self
+
+    @property
+    def recommended_plan(self) -> ActionPlanCandidate:
+        """Return the model-selected candidate."""
+
+        return next(
+            candidate
+            for candidate in self.candidates
+            if candidate.plan_id == self.recommended_plan_id
+        )
+
+
+class ActionPlanningRunResult(DomainModel):
+    """Validated result of one AI planning run."""
+
+    model_name: str
+    analysis_time: datetime
+    plan: ActionPlanSet
+    tools_used: tuple[str, ...]
